@@ -2,7 +2,6 @@ let _clockSkew = 0;
 module.exports = {
     clockSkew: function clockSkew(millis) {
         _clockSkew = millis;
-        console.log('clockSkew: '+millis+'ms');
     },
 
     time: function time(a) {
@@ -13,41 +12,35 @@ module.exports = {
     },
 
     until: function until(t, a) {
-        const d = (new Date(t) - new Date()) / 1000 + (a || 0);
+        const d = Math.round((new Date(t).getTime() - new Date().getTime() + _clockSkew) / 1000 + (a || 0));
         return d < 0 ? this.ft(-d) + ' ago' : this.ft(d);
     },
 
     ft: function ft(sec) {
-        if (sec < 100) {
+        const absSec = Math.abs(sec);
+        if (absSec < 100)
             return Math.round(sec) + 's';
-        }
-        const min = sec / 60;
-        if (min < 100) {
-            return Math.round(min) + 'm';
-        }
-        const hr = min / 60;
-        return Math.round(hr) + 'h';
+        if (absSec < 6000)
+            return Math.round(sec / 60) + 'm';
+        return Math.round(sec / 60 / 60) + 'h';
     },
 
     countPeople: function countPeople(objects, buildings) {
         let people = 0;
-        for (let o of objects) {
+        for (let o of objects)
             people += buildings[o.type].people;
-        }
         return people;
     },
 
     anyTopLeft: function anyTopLeft(r, c, objects) {
-        for (let o of objects) {
+        for (let o of objects)
             if (o.r === r && o.c === c) return o;
-        }
         return null;
     },
 
     anyIntersect: function anyIntersect(r, c, objects) {
-        for (let o of objects) {
+        for (let o of objects)
             if (this.intersect(r, c, o)) return o;
-        }
         return null;
     },
 
@@ -68,25 +61,23 @@ module.exports = {
         return null;
     },
 
-    inbounds: function inbounds(r, c) {
-        return 0 <= r && r < 20 && 0 <= c && c < 40;
+    inbounds: function inbounds(r, c, h, w) {
+        return 0 <= r && r+(h||1) <= 20 && 0 <= c && c+(w||1) <= 40;
     },
 
     checkResources: function checkResources(res, cost) {
         const lacking = {};
-        for (let c in cost) {
-            if ((res[c] || 0) - cost[c] < 0) lacking[c] = cost[c] - (res[c] || 0);
-        }
+        for (let c in cost)
+            if ((res[c] || 0) - cost[c] < 0)
+                lacking[c] = cost[c] - (res[c] || 0);
         return Object.keys(lacking).length ? lacking : null;
     },
 
     deductResources: function deductResources(res, cost) {
         const lacking = this.checkResources(res, cost);
-        if (!lacking) {
-            for (let c in cost) {
+        if (!lacking)
+            for (let c in cost)
                 res[c] -= cost[c];
-            }
-        }
         return lacking;
     },
 };

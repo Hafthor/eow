@@ -36,11 +36,10 @@ function drawBoard(board, objects) {
                 const b = buildings[o.type];
                 const mineableIfBefore = common.time(-b.harvestTime)
                 td.className = now > o.minedAt ? o.minedAt < mineableIfBefore ? 'harvestable' : 'built' : 'building'
-                if (td.className === 'building') {
+                if (td.className === 'building')
                     td.innerHTML += '<br>' + common.until(o.minedAt);
-                } else if (td.className === 'built') {
+                else if (td.className === 'built')
                     td.innerHTML += '<br>' + common.until(o.minedAt, b.harvestTime);
-                }
                 td.dataset.coord = r + ',' + c;
                 td.dataset.hw = o.h + ',' + o.w;
                 tr.appendChild(td);
