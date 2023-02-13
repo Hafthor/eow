@@ -80,4 +80,9 @@ module.exports = {
                 res[c] -= cost[c];
         return lacking;
     },
+
+    creditResources: function creditResources(res, amt) {
+        for(let c in amt)
+            res[c] = (res[c] || 0) + amt[c];
+    }
 };

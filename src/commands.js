@@ -6,26 +6,27 @@ module.exports = executeCommand;
 function executeCommand(state, command, mode) {
     const cmd = command.split(' ');
     if (cmd[0] === 'help')
-        return 'commands: build {building_type} and move. building types include hut, fire_hut and wood_hut. then you click where you want it (top/left). move, you select item to move, then click where you want it (top/left).';
+        return 'commands: build {building_type}, sell and move. building types include hut, fire_hut and wood_hut. then you click where you want it (top/left). sell, you select the building to sell. move, you select building to move, then click where you want it (top/left).';
     else if (cmd[0] === 'click')
         return executeClickCommand(state, cmd, mode);
     else if (cmd[0] === 'build')
         return executeBuildCommand(state, cmd);
     else if (cmd[0] === 'move')
         return executeMoveCommand(state, cmd);
+    else if (cmd[0] === 'sell') 
+        return executeSellCommand(state, cmd);
     else
         return 'Unknown command ' + JSON.stringify(command) + '. Try "help".';
 }
 
 function executeClickCommand(state, cmd, mode) {
-    if (mode && mode.split(' ')[0] === 'build') {
-        const newCommand = mode + ' ' + cmd[1];
-        return executeCommand(state, newCommand);
-    }
-    if (mode && mode.split(' ')[0] === 'move') {
-        const newCommand = mode + ' ' + cmd[1];
-        return executeCommand(state, newCommand);
-    }
+    if (mode && mode.split(' ')[0] === 'build')
+        return executeCommand(state, mode + ' ' + cmd[1]);
+    if (mode && mode.split(' ')[0] === 'move')
+        return executeCommand(state, mode + ' ' + cmd[1]);
+    if (mode && mode.split(' ')[0] === 'sell')
+        return executeCommand(state, mode + ' ' + cmd[1]);
+
     const coord = cmd[1].split(',');
     const o = common.anyIntersect(coord[0], coord[1], state.objects);
     if (!o) return 'Sorry, nothing found at r=' + coord[0] + ', c=' + coord[1];
@@ -73,5 +74,18 @@ function executeMoveCommand(state, cmd) {
     
     moveWhat.r = +moveTo[0];
     moveWhat.c = +moveTo[1];
+    return { command: cmd.join(' ') };
+}
+
+function executeSellCommand(state, cmd) {
+    if (!cmd[1])
+        return { mode: cmd[0] };
+    const sellFrom = cmd[1].split(',');
+    const sellWhat = common.anyIntersect(+sellFrom[0], +sellFrom[1], state.objects);
+    if (!sellWhat) return 'no building there';
+    const b = buildings[sellWhat.type];
+    if (common.countPeople(state.objects, buildings)<b.people) return 'not enough room for our people';
+    common.creditResources(state.resources, b.sell);
+    state.objects.splice(state.objects.indexOf(sellWhat), 1);
     return { command: cmd.join(' ') };
 }

@@ -161,7 +161,7 @@ describe('common.js', function() {
         });
     });
 
-    describe('checkResource/deductResources', function() {
+    describe('checkResource/deductResources/creditResources', function() {
         it('should return null if not lacking', function() {
             const res = {a: 10, b: 10, c: 10};
             const cost = {b: 5, c: 10};
@@ -190,6 +190,13 @@ describe('common.js', function() {
             const actual = common.deductResources(res, cost);
             assert.deepEqual(actual, {c: 5, d: 10});
             assert.deepEqual(res, {a: 10, b: 10, c: 10});
+        });
+
+        it('should credit resources', function() {
+            const res = {a: 10, b: 10, c: 10};
+            const amt = {b: 5, c: 15, d: 10};
+            common.creditResources(res, amt);
+            assert.deepEqual(res, {a: 10, b: 15, c: 25, d: 10});
         });
     });
 });

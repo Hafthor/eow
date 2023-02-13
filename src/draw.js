@@ -35,7 +35,7 @@ function drawBoard(board, objects) {
                 td.innerHTML = o.type;
                 const b = buildings[o.type];
                 const mineableIfBefore = common.time(-b.harvestTime)
-                td.className = now > o.minedAt ? o.minedAt < mineableIfBefore ? 'harvestable' : 'built' : 'building'
+                td.className = now >= o.minedAt ? o.minedAt < mineableIfBefore ? 'harvestable' : 'built' : 'building'
                 if (td.className === 'building')
                     td.innerHTML += '<br>' + common.until(o.minedAt);
                 else if (td.className === 'built')
