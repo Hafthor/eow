@@ -36,14 +36,11 @@ const file = require('./file');
 
 function readOrInit(player) {
     return file.load(player).then(function (state) {
-        if (!state) {
-            state = initialState();
-            return file.save(player, state).then(function () {
-                return state;
-            });
-        } else {
+        if (state) return state;
+        state = initialState();
+        return file.save(player, state).then(function () {
             return state;
-        }
+        });
     });
 }
 
@@ -63,10 +60,12 @@ function apiState(req, resp, next) {
     const query = url.parse(req.url, { parseQueryString: true }).query;
     readOrInit(query.player).then(function (state) {
         state.time = common.time();
+        console.log('apiState player=' + query.player);
         resp.send(JSON.stringify(state));
     });
 }
 
+const buildingsJson = JSON.stringify(buildings);
 function apiBuildings(req, resp, next) {
-    resp.send(JSON.stringify(buildings));
+    resp.send(buildingsJson);
 }

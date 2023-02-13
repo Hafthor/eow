@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "test": "mocha --recursive \"./**/*.test.js\"",
+    "test-watch": "mocha -w --recursive \"./**/*.test.js\"",
     "build": "webpack",
     "watch": "webpack --watch",
     "start": "webpack serve --open",
@@ -13,20 +14,14 @@
   "author": "Hafthor Stefansson",
   "license": "ISC",
   "devDependencies": {
-    "chai": "^4.3.7",
     "css-loader": "^6.7.3",
-    "csv-loader": "^3.0.5",
     "express": "^4.18.2",
     "html-webpack-plugin": "^5.5.0",
-    "json5": "^2.2.3",
     "mocha": "^10.2.0",
     "style-loader": "^3.3.1",
-    "toml": "^3.0.0",
     "webpack": "^5.75.0",
     "webpack-cli": "^5.0.1",
     "webpack-dev-middleware": "^6.0.1",
-    "webpack-dev-server": "^4.11.1",
-    "xml-loader": "^1.2.1",
-    "yamljs": "^0.3.0"
+    "webpack-dev-server": "^4.11.1"
   }
 }
