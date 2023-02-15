@@ -50,7 +50,7 @@ function executeBuildCommand(state, cmd) {
     if (!cmd[2]) return { mode: 'build ' + type };
 
     const coord = cmd[2].split(',');
-    if (!common.inbounds(coord[0], coord[1], b.h, b.w)) return 'out of bounds';
+    if (!common.inbounds(+coord[0], +coord[1], b.h, b.w)) return 'out of bounds';
     const o = Object.assign({ r: +coord[0], c: +coord[1], state: -1, minedAt: common.time(b.buildTime), type: type }, b);
     if (common.collides(o, state.objects)) return 'sorry, not enough space there';
     const lacking2 = common.deductResources(state.resources, b.build);

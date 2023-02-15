@@ -199,4 +199,26 @@ describe('common.js', function() {
             assert.deepEqual(res, {a: 10, b: 15, c: 25, d: 10});
         });
     });
+
+    describe('parseQuery', function() {
+        it('should handle empty query', function() {
+            const actual = common.parseQuery();
+            assert.deepEqual(actual, {});
+        });
+
+        it('should handle valueless query param', function() {
+            const actual = common.parseQuery('?cmd');
+            assert.deepEqual(actual, {cmd:null});
+        });
+
+        it('should handle queries with params', function() {
+            const actual = common.parseQuery('?a=1&b=2');
+            assert.deepEqual(actual, {a:'1',b:'2'});
+        });
+
+        it('should handle repeated names by overwriting them', function() {
+            const actual = common.parseQuery('?a=1&a=2');
+            assert.deepEqual(actual, {a:'2'});
+        });
+    });
 });

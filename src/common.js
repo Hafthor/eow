@@ -84,5 +84,15 @@ module.exports = {
     creditResources: function creditResources(res, amt) {
         for(let c in amt)
             res[c] = (res[c] || 0) + amt[c];
-    }
+    },
+
+    parseQuery: function parseQuery(urlSearch) {
+        const query = (urlSearch || '').substring(1);
+        if (!query) return {};
+        return (urlSearch || '').substring(1).split('&').reduce(function (o, q) {
+            const qq = q.split('=');
+            o[decodeURIComponent(qq[0])] = qq[1]==null ? null : decodeURIComponent(qq[1]);
+            return o;
+        }, {});
+    },
 };

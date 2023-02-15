@@ -3,6 +3,7 @@ const common = require('./common');
 const commands = require('./commands');
 const createElements = require('./createElements');
 const draw = require('./draw');
+const buildings = require('./buildings');
 
 const elements = createElements(executeCommand);
 
@@ -28,7 +29,9 @@ function getText(r) { return r.text(); }
 
 function queueServerCommand(command) {
     console.log('queueServerCommand: ' + command);
-    fetch('/api/exec?player=' + encodeURIComponent(query.player) + '&cmd=' + encodeURIComponent(command)).then(getText).then(function (text) {
+    const url = '/api/exec?player=' + encodeURIComponent(query.player) + 
+        '&cmd=' + encodeURIComponent(command);
+    fetch(url).then(getText).then(function (text) {
         const r = JSON.parse(text);
         common.clockSkew(new Date() - new Date(r.time));
     }).catch(function (e) {
@@ -37,32 +40,21 @@ function queueServerCommand(command) {
     });
 }
 
-let buildings, state;
-
-const query = (location.search || '').substring(1).split('&').reduce(function (o, q) {
-    const qq = q.split('=');
-    o[decodeURIComponent(qq[0])] = decodeURIComponent(qq[1]);
-    return o;
-}, {});
-
+let state;
+const query = common.parseQuery(location.search);
 if (!query.player) {
     const player = prompt('who are you?');
     location.href += '?player=' + encodeURIComponent(player);
 } else {
     statusbar.innerHTML = 'Loading...';
-    const promise1 = fetch('/api/buildings').then(getText).then(function (text) {
-        buildings = JSON.parse(text);
-        statusbar.innerHTML += '...';
-    });
-    const promise2 = fetch('/api/state?player=' + encodeURIComponent(query.player)).then(getText).then(function (text) {
+    fetch('/api/state?player=' + encodeURIComponent(query.player)).then(getText).then(function (text) {
         state = JSON.parse(text);
         common.clockSkew(new Date() - new Date(state.time));
-        statusbar.innerHTML += '...';
-    });
-    Promise.all([promise1, promise2]).then(function () {
         draw.draw(elements, state);
         setInterval(function () {
             draw.drawBoard(elements.board, state.objects);
         }, 1000);
+    }).catch(function() {
+        alert('Sorry. We encountered an error loading your game. Try again later.');
     });
 }

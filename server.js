@@ -12,7 +12,6 @@ const compiler = webpack(config);
 const webpackDevMiddlewareOptions = { publicPath: config.output.publicPath };
 app.use(webpackDevMiddleware(compiler, webpackDevMiddlewareOptions));
 app.use('/api/exec', apiExec);
-app.use('/api/buildings', apiBuildings);
 app.use('/api/state', apiState);
 
 // Serve the files on port 3000.
@@ -20,7 +19,6 @@ app.listen(3000, function () { });
 
 const common = require('./src/common');
 const execCmd = require('./src/commands');
-const buildings = require('./src/buildings');
 const states = {};
 const fs = require('fs');
 
@@ -63,9 +61,4 @@ function apiState(req, resp, next) {
         console.log('apiState player=' + query.player);
         resp.send(JSON.stringify(state));
     });
-}
-
-const buildingsJson = JSON.stringify(buildings);
-function apiBuildings(req, resp, next) {
-    resp.send(buildingsJson);
 }
