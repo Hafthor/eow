@@ -28,7 +28,7 @@ function executeClickCommand(state, cmd, mode) {
         return executeCommand(state, mode + ' ' + cmd[1]);
 
     const coord = cmd[1].split(',');
-    const o = common.anyIntersect(coord[0], coord[1], state.objects);
+    const o = common.anyIntersect(+coord[0], +coord[1], state.objects);
     if (!o) return 'Sorry, nothing found at r=' + coord[0] + ', c=' + coord[1];
     const b = buildings[o.type];
     if (o.minedAt > common.time(-b.harvestTime)) return;
