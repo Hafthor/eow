@@ -7,25 +7,25 @@ function executeCommand(state, command, mode) {
     const cmd = command.split(' ');
     if (cmd[0] === 'help')
         return 'commands: build {building_type}, sell and move. building types include hut, fire_hut and wood_hut. then you click where you want it (top/left). sell, you select the building to sell. move, you select building to move, then click where you want it (top/left).';
-    else if (cmd[0] === 'click')
+    if (cmd[0] === 'click')
         return executeClickCommand(state, cmd, mode);
-    else if (cmd[0] === 'build')
+    if (cmd[0] === 'build')
         return executeBuildCommand(state, cmd);
-    else if (cmd[0] === 'move')
+    if (cmd[0] === 'move')
         return executeMoveCommand(state, cmd);
-    else if (cmd[0] === 'sell') 
+    if (cmd[0] === 'sell') 
         return executeSellCommand(state, cmd);
-    else
-        return 'Unknown command ' + JSON.stringify(command) + '. Try "help".';
+    return 'Unknown command ' + JSON.stringify(command) + '. Try "help".';
 }
 
 function executeClickCommand(state, cmd, mode) {
-    if (mode && mode.split(' ')[0] === 'build')
-        return executeCommand(state, mode + ' ' + cmd[1]);
-    if (mode && mode.split(' ')[0] === 'move')
-        return executeCommand(state, mode + ' ' + cmd[1]);
-    if (mode && mode.split(' ')[0] === 'sell')
-        return executeCommand(state, mode + ' ' + cmd[1]);
+    const mcmd = (mode || '').split(' ')[0], newcmd = (mode || '') + ' ' + cmd[1];
+    if (mcmd === 'build')
+        return executeCommand(state, newcmd);
+    if (mcmd === 'move')
+        return executeCommand(state, newcmd);
+    if (mcmd === 'sell')
+        return executeCommand(state, newcmd);
 
     const coord = cmd[1].split(',');
     const o = common.anyIntersect(+coord[0], +coord[1], state.objects);
@@ -54,6 +54,7 @@ function executeBuildCommand(state, cmd) {
     const o = Object.assign({ r: +coord[0], c: +coord[1], state: -1, minedAt: common.time(b.buildTime), type: type }, b);
     if (common.collides(o, state.objects)) return 'sorry, not enough space there';
     const lacking2 = common.deductResources(state.resources, b.build);
+    state.resources.people += b.people;
     if (lacking2) return 'sorry, not have enough resources, lacking: ' + JSON.stringify(lacking2);
     state.objects.push(o);
     return { command: cmd.join(' ') };
@@ -65,11 +66,12 @@ function executeMoveCommand(state, cmd) {
 
     const moveFrom = cmd[1].split(',');
     const moveWhat = common.anyIntersect(+moveFrom[0], +moveFrom[1], state.objects);
+    if (!moveWhat) return 'no building there';
     if (!cmd[2]) return { mode: cmd[0] + ' ' + cmd[1] };
     
     const moveTo = cmd[2].split(',');
-    const o = Object.assign({ r: +moveTo[0], c: +moveTo[1] }, moveWhat);
-    const objects = state.objects.filter(function (o) { o !== moveWhat; });
+    const o = Object.assign({}, moveWhat, { r: +moveTo[0], c: +moveTo[1] });
+    const objects = state.objects.filter(function (obj) { return obj !== moveWhat; });
     if (common.collides(o, objects)) return 'sorry, not enough space there';
     
     moveWhat.r = +moveTo[0];
@@ -86,6 +88,7 @@ function executeSellCommand(state, cmd) {
     const b = buildings[sellWhat.type];
     if (common.countPeople(state.objects, buildings)<b.people) return 'not enough room for our people';
     common.creditResources(state.resources, b.sell);
+    state.resources.people -= b.people;
     state.objects.splice(state.objects.indexOf(sellWhat), 1);
     return { command: cmd.join(' ') };
 }
