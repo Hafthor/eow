@@ -46,11 +46,16 @@ function apiExec(req, resp, next) {
     const query = url.parse(req.url, { parseQueryString: true }).query;
     readOrInit(query.player).then(function (state) {
         const result = execCmd(state, query.cmd);
-        if (typeof result === 'string') throw result;
-        console.log('apiExec player=' + query.player + ', cmd=' + query.cmd);
-        file.save(query.player, state).then(function () {
-            resp.send(JSON.stringify({ time: common.time() }));
-        });
+        if (typeof result === 'string') {
+            resp.status(400).send(result);
+        } else if ((result || {}).command) {
+            console.log('apiExec player=' + query.player + ', cmd=' + query.cmd);
+            file.save(query.player, state).then(function () {
+                resp.send(JSON.stringify({ time: common.time() }));
+            });
+        } else {
+            resp.send(400).send(result);
+        }
     });
 }
 
