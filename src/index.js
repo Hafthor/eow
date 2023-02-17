@@ -46,7 +46,7 @@ if (!query.player) {
     const player = prompt('who are you?');
     location.href += '?player=' + encodeURIComponent(player);
 } else {
-    statusbar.innerHTML = 'Loading...';
+    statusBar.innerHTML = 'Loading...';
     fetch('/api/state?player=' + encodeURIComponent(query.player)).then(getText).then(function (text) {
         state = JSON.parse(text);
         common.clockSkew(new Date() - new Date(state.time));

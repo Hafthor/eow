@@ -1,6 +1,6 @@
 module.exports = function createElements(executeCommand) {
     const statusBar = document.createElement('div');
-    statusBar.id = 'statusbar';
+    statusBar.id = 'statusBar';
     const board = document.createElement('table');
     board.id = 'board';
     board.cellPadding = 0;
@@ -32,7 +32,7 @@ module.exports = function createElements(executeCommand) {
     info.id = 'info';
 
     const commandBar = document.createElement('input');
-    commandBar.id = 'commandbar';
+    commandBar.id = 'commandBar';
     document.body.appendChild(statusBar);
     document.body.appendChild(board);
     document.body.appendChild(info);

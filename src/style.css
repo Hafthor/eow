@@ -1,4 +1,4 @@
-div#statusbar {}
+div#statusBar {}
 
 table#board {}
 
@@ -26,6 +26,6 @@ textarea#info {
     height: 200px;
 }
 
-input#commandbar {
+input#commandBar {
     width: 100%;
 }
