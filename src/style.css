@@ -1,8 +1,31 @@
-div#statusbar { }
-table#board { }
-table#board tr { height: 35px; }
-table#board tr td { vertical-align: middle; text-align: center; border: solid 0.3px blue; width: 40px; }
-table#board tr td.harvestable { background: #cfc; }
-table#board tr td.building { background: #fcc; }
-textarea#info { width: 100%; height: 200px; }
-input#commandbar { width: 100%; }
+div#statusbar {}
+
+table#board {}
+
+table#board tr {
+    height: 35px;
+}
+
+table#board tr td {
+    vertical-align: middle;
+    text-align: center;
+    border: solid 0.3px blue;
+    width: 40px;
+}
+
+table#board tr td.harvestable {
+    background: #cfc;
+}
+
+table#board tr td.building {
+    background: #fcc;
+}
+
+textarea#info {
+    width: 100%;
+    height: 200px;
+}
+
+input#commandbar {
+    width: 100%;
+}

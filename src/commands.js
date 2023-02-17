@@ -13,7 +13,7 @@ function executeCommand(state, command, mode) {
         return executeBuildCommand(state, cmd);
     if (cmd[0] === 'move')
         return executeMoveCommand(state, cmd);
-    if (cmd[0] === 'sell') 
+    if (cmd[0] === 'sell')
         return executeSellCommand(state, cmd);
     return 'Unknown command ' + JSON.stringify(command) + '. Try "help".';
 }
@@ -68,12 +68,12 @@ function executeMoveCommand(state, cmd) {
     const moveWhat = common.anyIntersect(+moveFrom[0], +moveFrom[1], state.objects);
     if (!moveWhat) return 'no building there';
     if (!cmd[2]) return { mode: cmd[0] + ' ' + cmd[1] };
-    
+
     const moveTo = cmd[2].split(',');
     const o = Object.assign({}, moveWhat, { r: +moveTo[0], c: +moveTo[1] });
     const objects = state.objects.filter(function (obj) { return obj !== moveWhat; });
     if (common.collides(o, objects)) return 'sorry, not enough space there';
-    
+
     moveWhat.r = +moveTo[0];
     moveWhat.c = +moveTo[1];
     return { command: cmd.join(' ') };
@@ -86,7 +86,7 @@ function executeSellCommand(state, cmd) {
     const sellWhat = common.anyIntersect(+sellFrom[0], +sellFrom[1], state.objects);
     if (!sellWhat) return 'no building there';
     const b = buildings[sellWhat.type];
-    if (common.countPeople(state.objects, buildings)<b.people) return 'not enough room for our people';
+    if (common.countPeople(state.objects, buildings) < b.people) return 'not enough room for our people';
     common.creditResources(state.resources, b.sell);
     state.resources.people -= b.people;
     state.objects.splice(state.objects.indexOf(sellWhat), 1);

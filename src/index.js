@@ -29,7 +29,7 @@ function getText(r) { return r.text(); }
 
 function queueServerCommand(command) {
     console.log('queueServerCommand: ' + command);
-    const url = '/api/exec?player=' + encodeURIComponent(query.player) + 
+    const url = '/api/exec?player=' + encodeURIComponent(query.player) +
         '&cmd=' + encodeURIComponent(command);
     fetch(url).then(getText).then(function (text) {
         const r = JSON.parse(text);
@@ -54,7 +54,7 @@ if (!query.player) {
         setInterval(function () {
             draw.drawBoard(elements.board, state.objects);
         }, 1000);
-    }).catch(function() {
+    }).catch(function () {
         alert('Sorry. We encountered an error loading your game. Try again later.');
     });
 }

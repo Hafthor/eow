@@ -49,7 +49,7 @@ function apiExec(req, resp, next) {
         if (typeof result === 'string') throw result;
         console.log('apiExec player=' + query.player + ', cmd=' + query.cmd);
         file.save(query.player, state).then(function () {
-            resp.send(JSON.stringify({time: common.time()}));
+            resp.send(JSON.stringify({ time: common.time() }));
         });
     });
 }

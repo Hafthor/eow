@@ -62,7 +62,7 @@ module.exports = {
     },
 
     inbounds: function inbounds(r, c, h, w) {
-        return 0 <= r && r+(h||1) <= 20 && 0 <= c && c+(w||1) <= 40;
+        return 0 <= r && r + (h || 1) <= 20 && 0 <= c && c + (w || 1) <= 40;
     },
 
     checkResources: function checkResources(res, cost) {
@@ -82,7 +82,7 @@ module.exports = {
     },
 
     creditResources: function creditResources(res, amt) {
-        for(let c in amt)
+        for (let c in amt)
             res[c] = (res[c] || 0) + amt[c];
     },
 
@@ -91,7 +91,7 @@ module.exports = {
         if (!query) return {};
         return (urlSearch || '').substring(1).split('&').reduce(function (o, q) {
             const qq = q.split('=');
-            o[decodeURIComponent(qq[0])] = qq[1]==null ? null : decodeURIComponent(qq[1]);
+            o[decodeURIComponent(qq[0])] = qq[1] == null ? null : decodeURIComponent(qq[1]);
             return o;
         }, {});
     },
