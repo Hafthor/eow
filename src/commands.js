@@ -19,44 +19,45 @@ function executeCommand(state, command, mode) {
 }
 
 function executeClickCommand(state, cmd, mode) {
-    const mcmd = (mode || '').split(' ')[0], newcmd = (mode || '') + ' ' + cmd[1];
-    if (mcmd === 'build')
-        return executeCommand(state, newcmd);
-    if (mcmd === 'move')
-        return executeCommand(state, newcmd);
-    if (mcmd === 'sell')
-        return executeCommand(state, newcmd);
+    const modeCmd = (mode || '').split(' ')[0];
+    const newCmd = (mode || '') + ' ' + cmd[1];
+    if (modeCmd === 'build')
+        return executeCommand(state, newCmd);
+    if (modeCmd === 'move')
+        return executeCommand(state, newCmd);
+    if (modeCmd === 'sell')
+        return executeCommand(state, newCmd);
 
     const coord = cmd[1].split(',');
-    const o = common.anyIntersect(+coord[0], +coord[1], state.objects);
-    if (!o) return 'Sorry, nothing found at r=' + coord[0] + ', c=' + coord[1];
-    const b = buildings[o.type];
-    if (o.minedAt > common.time(-b.harvestTime)) return;
+    const obj = common.anyIntersect(+coord[0], +coord[1], state.objects);
+    if (!obj) return 'Sorry, nothing found at r=' + coord[0] + ', c=' + coord[1];
+    const building = buildings[obj.type];
+    if (obj.minedAt > common.time(-building.harvestTime)) return;
 
-    for (let r in b.harvest)
-        state.resources[r] = (state.resources[r] || 0) + b.harvest[r];
-    o.minedAt = common.time();
+    for (let resource in building.harvest)
+        state.resources[resource] = (state.resources[resource] || 0) + building.harvest[resource];
+    obj.minedAt = common.time();
     return { command: cmd.join(' ') };
 }
 
 function executeBuildCommand(state, cmd) {
-    const type = cmd[1];
-    const b = buildings[type];
-    if (!b) return 'unknown building type ' + type;
-    if (state.resources.people + b.people < 0)
+    const buildingType = cmd[1];
+    const building = buildings[buildingType];
+    if (!building) return 'unknown building type ' + buildingType;
+    if (state.resources.people + building.people < 0)
         return 'sorry, not enough people';
-    const lacking = common.checkResources(state.resources, b.build);
+    const lacking = common.checkResources(state.resources, building.build);
     if (lacking) return 'sorry, not have enough resources, lacking: ' + JSON.stringify(lacking);
-    if (!cmd[2]) return { mode: 'build ' + type };
+    if (!cmd[2]) return { mode: 'build ' + buildingType };
 
     const coord = cmd[2].split(',');
-    if (!common.inbounds(+coord[0], +coord[1], b.h, b.w)) return 'out of bounds';
-    const o = Object.assign({ r: +coord[0], c: +coord[1], state: -1, minedAt: common.time(b.buildTime), type: type }, b);
-    if (common.collides(o, state.objects)) return 'sorry, not enough space there';
-    const lacking2 = common.deductResources(state.resources, b.build);
-    state.resources.people += b.people;
+    if (!common.inbounds(+coord[0], +coord[1], building.h, building.w)) return 'out of bounds';
+    const obj = Object.assign({ r: +coord[0], c: +coord[1], state: -1, minedAt: common.time(building.buildTime), type: buildingType }, building);
+    if (common.collides(obj, state.objects)) return 'sorry, not enough space there';
+    const lacking2 = common.deductResources(state.resources, building.build);
+    state.resources.people += building.people;
     if (lacking2) return 'sorry, not have enough resources, lacking: ' + JSON.stringify(lacking2);
-    state.objects.push(o);
+    state.objects.push(obj);
     return { command: cmd.join(' ') };
 }
 
@@ -70,9 +71,9 @@ function executeMoveCommand(state, cmd) {
     if (!cmd[2]) return { mode: cmd[0] + ' ' + cmd[1] };
 
     const moveTo = cmd[2].split(',');
-    const o = Object.assign({}, moveWhat, { r: +moveTo[0], c: +moveTo[1] });
+    const obj = Object.assign({}, moveWhat, { r: +moveTo[0], c: +moveTo[1] });
     const objects = state.objects.filter(function (obj) { return obj !== moveWhat; });
-    if (common.collides(o, objects)) return 'sorry, not enough space there';
+    if (common.collides(obj, objects)) return 'sorry, not enough space there';
 
     moveWhat.r = +moveTo[0];
     moveWhat.c = +moveTo[1];
@@ -85,10 +86,10 @@ function executeSellCommand(state, cmd) {
     const sellFrom = cmd[1].split(',');
     const sellWhat = common.anyIntersect(+sellFrom[0], +sellFrom[1], state.objects);
     if (!sellWhat) return 'no building there';
-    const b = buildings[sellWhat.type];
-    if (common.countPeople(state.objects, buildings) < b.people) return 'not enough room for our people';
-    common.creditResources(state.resources, b.sell);
-    state.resources.people -= b.people;
+    const building = buildings[sellWhat.type];
+    if (common.countPeople(state.objects, buildings) < building.people) return 'not enough room for our people';
+    common.creditResources(state.resources, building.sell);
+    state.resources.people -= building.people;
     state.objects.splice(state.objects.indexOf(sellWhat), 1);
     return { command: cmd.join(' ') };
 }

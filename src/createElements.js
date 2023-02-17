@@ -1,22 +1,22 @@
 module.exports = function createElements(executeCommand) {
-    const statusbar = document.createElement('div');
-    statusbar.id = 'statusbar';
+    const statusBar = document.createElement('div');
+    statusBar.id = 'statusbar';
     const board = document.createElement('table');
     board.id = 'board';
     board.cellPadding = 0;
     board.cellSpacing = 0;
-    board.onmouseup = function (e) {
-        const ex = e.offsetX, ey = e.offsetY;
-        let ele = e.srcElement;
-        if (ele && ele.dataset && ele.dataset.coord) {
-            const coord = ele.dataset.coord.split(',');
-            if (!ele.dataset.hw) {
+    board.onmouseup = function (event) {
+        const ex = event.offsetX, ey = event.offsetY;
+        let element = event.srcElement;
+        if (element && element.dataset && element.dataset.coord) {
+            const coord = element.dataset.coord.split(',');
+            if (!element.dataset.hw) {
                 executeCommand('click ' + coord);
             } else {
-                const td = ele.getBoundingClientRect();
+                const td = element.getBoundingClientRect();
                 const tdh = td.bottom - td.top;
                 const tdw = td.right - td.left;
-                const hw = ele.dataset.hw.split(',');
+                const hw = element.dataset.hw.split(',');
                 let r = +coord[0] + ey / (tdh / +hw[0]) | 0;
                 let c = +coord[1] + ex / (tdw / +hw[1]) | 0;
                 // clamp to limit, just in case the math is slightly off
@@ -31,17 +31,17 @@ module.exports = function createElements(executeCommand) {
     const info = document.createElement('textarea');
     info.id = 'info';
 
-    const commandbar = document.createElement('input');
-    commandbar.id = 'commandbar';
-    document.body.appendChild(statusbar);
+    const commandBar = document.createElement('input');
+    commandBar.id = 'commandbar';
+    document.body.appendChild(statusBar);
     document.body.appendChild(board);
     document.body.appendChild(info);
-    document.body.appendChild(commandbar);
-    commandbar.onkeyup = function (e) {
+    document.body.appendChild(commandBar);
+    commandBar.onkeyup = function (e) {
         if (event.key === 'Enter') {
             this.select();
             executeCommand(this.value);
         }
     };
-    return { statusbar, board, info, commandbar };
+    return { statusBar, board, info, commandBar };
 }

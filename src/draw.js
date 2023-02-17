@@ -7,13 +7,13 @@ module.exports = {
 
 function draw(elements, state) {
     state.resources.people = common.countPeople(state.objects, buildings);
-    drawStatusBar(elements.statusbar, state.resources, state.mode);
+    drawStatusBar(elements.statusBar, state.resources, state.mode);
     drawBoard(elements.board, state.objects);
     drawInfo(elements.info, state.messages);
 }
 
-function drawStatusBar(statusbar, resources, mode) {
-    statusbar.innerHTML = 'mode: ' + (mode || 'normal') + ', ' + JSON.stringify(resources);
+function drawStatusBar(statusBar, resources, mode) {
+    statusBar.innerHTML = 'mode: ' + (mode || 'normal') + ', ' + JSON.stringify(resources);
 }
 
 function drawInfo(info, messages) {

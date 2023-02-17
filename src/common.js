@@ -33,19 +33,19 @@ module.exports = {
     },
 
     anyTopLeft: function anyTopLeft(r, c, objects) {
-        for (let o of objects)
-            if (o.r === r && o.c === c) return o;
+        for (let obj of objects)
+            if (obj.r === r && obj.c === c) return obj;
         return null;
     },
 
     anyIntersect: function anyIntersect(r, c, objects) {
-        for (let o of objects)
-            if (this.intersect(r, c, o)) return o;
+        for (let obj of objects)
+            if (this.intersect(r, c, obj)) return obj;
         return null;
     },
 
-    intersect: function intersect(r, c, o) {
-        const tr = o.r, br = o.r + o.h - 1, lc = o.c, rc = o.c + o.w - 1;
+    intersect: function intersect(r, c, obj) {
+        const tr = obj.r, br = obj.r + obj.h - 1, lc = obj.c, rc = obj.c + obj.w - 1;
         return r >= tr && r <= br && c >= lc && c <= rc;
     },
 
@@ -65,34 +65,34 @@ module.exports = {
         return 0 <= r && r + (h || 1) <= 20 && 0 <= c && c + (w || 1) <= 40;
     },
 
-    checkResources: function checkResources(res, cost) {
+    checkResources: function checkResources(resources, cost) {
         const lacking = {};
-        for (let c in cost)
-            if ((res[c] || 0) - cost[c] < 0)
-                lacking[c] = cost[c] - (res[c] || 0);
+        for (let resource in cost)
+            if ((resources[resource] || 0) - cost[resource] < 0)
+                lacking[resource] = cost[resource] - (resources[resource] || 0);
         return Object.keys(lacking).length ? lacking : null;
     },
 
-    deductResources: function deductResources(res, cost) {
-        const lacking = this.checkResources(res, cost);
+    deductResources: function deductResources(resources, cost) {
+        const lacking = this.checkResources(resources, cost);
         if (!lacking)
-            for (let c in cost)
-                res[c] -= cost[c];
+            for (let resource in cost)
+                resources[resource] -= cost[resource];
         return lacking;
     },
 
-    creditResources: function creditResources(res, amt) {
-        for (let c in amt)
-            res[c] = (res[c] || 0) + amt[c];
+    creditResources: function creditResources(resources, amt) {
+        for (let resource in amt)
+            resources[resource] = (resources[resource] || 0) + amt[resource];
     },
 
     parseQuery: function parseQuery(urlSearch) {
         const query = (urlSearch || '').substring(1);
         if (!query) return {};
-        return (urlSearch || '').substring(1).split('&').reduce(function (o, q) {
-            const qq = q.split('=');
-            o[decodeURIComponent(qq[0])] = qq[1] == null ? null : decodeURIComponent(qq[1]);
-            return o;
+        return (urlSearch || '').substring(1).split('&').reduce(function (obj, kv) {
+            kv = kv.split('=');
+            obj[decodeURIComponent(kv[0])] = kv[1] == null ? null : decodeURIComponent(kv[1]);
+            return obj;
         }, {});
     },
 };

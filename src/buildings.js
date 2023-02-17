@@ -1,6 +1,6 @@
 module.exports = {
     'hut': {
-        w: 2, h: 2, level: 0,
+        w: 2, h: 2,
         buildTime: 5,
         build: { lumber: 10 },
         sell: { lumber: 5 },
@@ -9,7 +9,7 @@ module.exports = {
         people: 5,
     },
     'fire_hut': {
-        w: 3, h: 3, level: 0,
+        w: 3, h: 3,
         buildTime: 5,
         build: { coins: 10 },
         sell: { coins: 5 },
@@ -18,7 +18,7 @@ module.exports = {
         people: -3,
     },
     'wood_hut': {
-        w: 3, h: 3, level: 0,
+        w: 3, h: 3,
         buildTime: 5,
         build: { food: 10 },
         sell: { food: 5 },
