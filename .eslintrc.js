@@ -12,5 +12,11 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
+    'no-param-reassign': 0,
+  },
+  settings: {
+    react: {
+      version: '999.999.999',
+    },
   },
 };

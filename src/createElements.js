@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 module.exports = function createElements(executeCommand) {
   const statusBar = document.createElement('div');
   statusBar.id = 'statusBar';

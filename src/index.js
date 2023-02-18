@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 import './style.css';
 
 const common = require('./common');
@@ -6,7 +7,7 @@ const createElements = require('./createElements');
 const draw = require('./draw');
 
 const query = common.parseQuery(document.location.search);
-const elements = createElements(executeCommand);
+let elements;
 let state;
 
 function showMessage(message) {
@@ -17,7 +18,6 @@ function showMessage(message) {
 function getText(r) { return r.text(); }
 
 function queueServerCommand(command) {
-  console.log(`queueServerCommand: ${command}`);
   const playerQuery = `player=${encodeURIComponent(query.player)}`;
   const cmdQuery = `cmd=${encodeURIComponent(command)}`;
   const url = `/api/exec?${playerQuery}&${cmdQuery}`;
@@ -43,6 +43,7 @@ function executeCommand(cmd) {
   draw.draw(elements, state);
 }
 
+elements = createElements(executeCommand);
 if (!query.player) {
   const player = prompt('who are you?');
   document.location.href += `?player=${encodeURIComponent(player)}`;
