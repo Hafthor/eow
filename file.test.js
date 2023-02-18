@@ -1,3 +1,4 @@
+const {describe,it} = require('mocha');
 const assert = require('assert');
 const fs = require('fs');
 const file = require('./file');

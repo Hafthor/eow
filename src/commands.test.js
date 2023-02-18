@@ -1,3 +1,4 @@
+const {describe,it} = require('mocha');
 const assert = require('assert');
 const executeCommand = require('./commands');
 const common = require('./common');
