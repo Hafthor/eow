@@ -1,3 +1,5 @@
+import { describe, it } from 'mocha';
+
 const assert = require('assert');
 const fs = require('fs');
 
@@ -8,7 +10,9 @@ describe('file.js', function () {
         it('should reject bad filename', function () {
             let exception = null;
             try {
-                const promise = file.load('../hack');
+                file.load('../hack').then(function() {
+                    assert.fail('should not complete');
+                });
             } catch (e) {
                 exception = e;
             }
@@ -38,7 +42,9 @@ describe('file.js', function () {
         it('should reject bad filename', function () {
             let exception = null;
             try {
-                const promise = file.save('../hack', {});
+                file.save('../hack', {}).then(function() {
+                    assert.fail('should not complete');
+                });
             } catch (e) {
                 exception = e;
             }

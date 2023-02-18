@@ -19,8 +19,7 @@ app.listen(3000, function () { });
 
 const common = require('./src/common');
 const execCmd = require('./src/commands');
-const states = {};
-const fs = require('fs');
+const buildings = require('./src/buildings');
 
 function initialState() {
     return {
@@ -42,7 +41,7 @@ function readOrInit(player) {
     });
 }
 
-function apiExec(req, resp, next) {
+function apiExec(req, resp) {
     const query = url.parse(req.url, { parseQueryString: true }).query;
     readOrInit(query.player).then(function (state) {
         const result = execCmd(state, query.cmd);
@@ -59,7 +58,7 @@ function apiExec(req, resp, next) {
     });
 }
 
-function apiState(req, resp, next) {
+function apiState(req, resp) {
     const query = url.parse(req.url, { parseQueryString: true }).query;
     readOrInit(query.player).then(function (state) {
         state.time = common.time();

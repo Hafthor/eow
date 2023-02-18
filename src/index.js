@@ -3,7 +3,6 @@ const common = require('./common');
 const commands = require('./commands');
 const createElements = require('./createElements');
 const draw = require('./draw');
-const buildings = require('./buildings');
 
 const elements = createElements(executeCommand);
 
@@ -34,7 +33,7 @@ function queueServerCommand(command) {
     fetch(url).then(getText).then(function (text) {
         const r = JSON.parse(text);
         common.clockSkew(new Date() - new Date(r.time));
-    }).catch(function (e) {
+    }).catch(function () {
         alert('Error!');
         document.location.reload();
     });
@@ -46,7 +45,7 @@ if (!query.player) {
     const player = prompt('who are you?');
     location.href += '?player=' + encodeURIComponent(player);
 } else {
-    statusBar.innerHTML = 'Loading...';
+    elements.statusBar.innerHTML = 'Loading...';
     fetch('/api/state?player=' + encodeURIComponent(query.player)).then(getText).then(function (text) {
         state = JSON.parse(text);
         common.clockSkew(new Date() - new Date(state.time));

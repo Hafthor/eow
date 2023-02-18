@@ -37,7 +37,7 @@ module.exports = function createElements(executeCommand) {
     document.body.appendChild(board);
     document.body.appendChild(info);
     document.body.appendChild(commandBar);
-    commandBar.onkeyup = function (e) {
+    commandBar.onkeyup = function () {
         if (event.key === 'Enter') {
             this.select();
             executeCommand(this.value);
