@@ -1,7 +1,4 @@
-import { describe, it } from 'mocha';
-
 const assert = require('assert');
-
 const common = require('./common');
 
 describe('common.js', function () {

@@ -1,8 +1,5 @@
-import { describe, it } from 'mocha';
-
 const assert = require('assert');
 const fs = require('fs');
-
 const file = require('./file');
 
 describe('file.js', function () {
