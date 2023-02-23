@@ -269,7 +269,7 @@ describe('commands.js', () => {
     });
 
     it('should research', () => {
-      const state = { research: ['cooking'], resources: { coins: 200, food: 200 }};
+      const state = { research: ['cooking'], resources: { coins: 200, food: 200 } };
       const result = executeCommand(state, 'research logging');
       assert.deepEqual(result, { command: 'research logging' });
       assert.deepEqual(state, { research: ['cooking', 'logging'], resources: { coins: 100, food: 100 } });
