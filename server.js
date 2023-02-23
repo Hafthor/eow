@@ -21,6 +21,7 @@ const buildings = require('./src/buildings');
 function initialState() {
   return {
     resources: { coins: 10 },
+    research: [],
     objects: [{
       type: 'hut', level: 0, c: 20, r: 10, w: 2, h: 2, minedAt: common.time(buildings.hut.buildTime),
     }],

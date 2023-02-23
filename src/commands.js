@@ -1,10 +1,17 @@
 const common = require('./common');
 const buildings = require('./buildings');
+const research = require('./research');
 
 function executeBuildCommand(state, cmd) {
   const buildingType = cmd[1];
+  const availableBuildingTypes = Object.keys(buildings)
+    .filter((b) => buildings[b].dependsOn.every((r) => state.research.includes(r)));
+  if (!buildingType) return `available building types: ${availableBuildingTypes}`;
   const building = buildings[buildingType];
   if (!building) return `unknown building type ${buildingType}`;
+  if (!availableBuildingTypes.includes(buildingType)) {
+    return `building type ${buildingType} requires research ${building.dependsOn}`;
+  }
   if (state.resources.people + building.people < 0) return 'sorry, not enough people';
   const lacking = common.checkResources(state.resources, building.build);
   if (lacking) return `sorry, not have enough resources, lacking: ${JSON.stringify(lacking)}`;
@@ -78,14 +85,40 @@ function executeClickCommand(state, cmd, mode) {
   return { command: cmd.join(' ') };
 }
 
+function executeResearchCommand(state, cmd) {
+  const availableResearch = Object.keys(research)
+    .filter((r) => !state.research.includes(r))
+    .filter((r) => research[r].dependsOn.every((rr) => state.research.includes(rr)));
+  if (!cmd[1]) return `available research = ${availableResearch}`;
+  if (!research[cmd[1]]) return `unknown research ${cmd[1]}`;
+  if (state.research.includes(cmd[1])) return `already researched ${cmd[1]}`;
+  if (!availableResearch.includes(cmd[1])) return `cannot research ${cmd[1]} yet`;
+  const lacking = common.deductResources(state.resources, research[cmd[1]].cost);
+  if (lacking) return `sorry, not have enough resources, lacking: ${JSON.stringify(lacking)}`;
+  state.research.push(cmd[1]);
+  return { command: cmd.join(' ') };
+}
+
+function executeHelpCommand() {
+  return 'commands: build {building_type}, sell, move, research. building types include hut, fire_hut and wood_hut. then you click where you want it (top/left). sell, you select the building to sell. move, you select building to move, then click where you want it (top/left).';
+}
+
+const dispatch = {
+  help: executeHelpCommand,
+  click: executeClickCommand,
+  build: executeBuildCommand,
+  move: executeMoveCommand,
+  sell: executeSellCommand,
+  research: executeResearchCommand,
+};
+
+function executeUnknownCommand(state, command) {
+  return `Unknown command ${JSON.stringify(command)}. Try "help".`;
+}
+
 function executeCommand(state, command, mode) {
   const cmd = command.split(' ');
-  if (cmd[0] === 'help') return 'commands: build {building_type}, sell and move. building types include hut, fire_hut and wood_hut. then you click where you want it (top/left). sell, you select the building to sell. move, you select building to move, then click where you want it (top/left).';
-  if (cmd[0] === 'click') return executeClickCommand(state, cmd, mode);
-  if (cmd[0] === 'build') return executeBuildCommand(state, cmd);
-  if (cmd[0] === 'move') return executeMoveCommand(state, cmd);
-  if (cmd[0] === 'sell') return executeSellCommand(state, cmd);
-  return `Unknown command ${JSON.stringify(command)}. Try "help".`;
+  return (dispatch[cmd[0]] || executeUnknownCommand)(state, cmd, mode);
 }
 
 module.exports = executeCommand;

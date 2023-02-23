@@ -55,31 +55,43 @@ describe('commands.js', () => {
   });
 
   describe('executeBuildCommand', () => {
+    it('should return available building types', () => {
+      const result = executeCommand({ research: ['cooking'] }, 'build');
+      assert.equal(typeof result, 'string');
+      assert(result.includes('hut,fire_hut'));
+    });
+
     it('should reject unknown building', () => {
-      const result = executeCommand({}, 'build derp');
+      const result = executeCommand({ research: [] }, 'build derp');
       assert.equal(typeof result, 'string');
       assert(result.includes('unknown'));
     });
 
+    it('should reject when research insufficient', () => {
+      const result = executeCommand({ research: [] }, 'build fire_hut');
+      assert.equal(typeof result, 'string');
+      assert(result.includes('cooking'));
+    });
+
     it('should reject when population insufficient', () => {
-      const result = executeCommand({ resources: { people: 0 } }, 'build fire_hut');
+      const result = executeCommand({ resources: { people: 0 }, research: ['cooking'] }, 'build fire_hut');
       assert.equal(typeof result, 'string');
       assert(result.includes('not enough people'));
     });
 
     it('should reject when resources insufficient', () => {
-      const result = executeCommand({ resources: { people: 10 } }, 'build fire_hut');
+      const result = executeCommand({ resources: { people: 10 }, research: ['cooking'] }, 'build fire_hut');
       assert.equal(typeof result, 'string');
       assert(result.includes('lacking'));
     });
 
     it('should return mode for build', () => {
-      const result = executeCommand({ resources: { people: 10, coins: 10 } }, 'build fire_hut');
+      const result = executeCommand({ resources: { people: 10, coins: 10 }, research: ['cooking'] }, 'build fire_hut');
       assert.deepEqual(result, { mode: 'build fire_hut' });
     });
 
     it('should reject out of bounds build', () => {
-      const state = { resources: { people: 10, coins: 10 } };
+      const state = { resources: { people: 10, coins: 10 }, research: ['cooking'] };
       const result = executeCommand(state, 'build fire_hut 1000,1000');
       assert.equal(typeof result, 'string');
       assert(result.includes('out of bounds'));
@@ -89,7 +101,7 @@ describe('commands.js', () => {
       const hut = {
         r: 2, c: 2, w: 2, h: 2, type: 'hut', minedAt: '2000-01-01T00:00:00.000Z',
       };
-      const state = { resources: { people: 10, coins: 10 }, objects: [hut] };
+      const state = { resources: { people: 10, coins: 10 }, research: ['cooking'], objects: [hut] };
       const result = executeCommand(state, 'build fire_hut 0,0');
       assert.equal(typeof result, 'string');
       assert(result.includes('not enough space'));
@@ -99,7 +111,7 @@ describe('commands.js', () => {
       const hut = {
         r: 3, c: 3, w: 2, h: 2, type: 'hut', minedAt: '2000-01-01T00:00:00.000Z',
       };
-      const state = { resources: { people: 10, coins: 10 }, objects: [hut] };
+      const state = { resources: { people: 10, coins: 10 }, research: ['cooking'], objects: [hut] };
       const result = executeCommand(state, 'build fire_hut 0,0');
       assert.deepEqual(result, { command: 'build fire_hut 0,0' });
       assert.deepEqual(state.resources, { people: 7, coins: 0 });
@@ -217,6 +229,50 @@ describe('commands.js', () => {
       assert.deepEqual(result, { command: 'move 1,1 1,1' });
       hut.r = 1; hut.c = 1;
       assert.deepEqual(state.objects, [hut, fireHut]);
+    });
+  });
+
+  describe('executeResearchCommand', () => {
+    it('should return what research is available', () => {
+      const state = { research: ['cooking'] };
+      const result = executeCommand(state, 'research');
+      assert.equal(typeof result, 'string');
+      assert(result.includes('logging'));
+    });
+
+    it('should reject research already done', () => {
+      const state = { research: ['cooking'] };
+      const result = executeCommand(state, 'research cooking');
+      assert.equal(typeof result, 'string');
+      assert(result.includes('already'));
+    });
+
+    it('should reject unknown research', () => {
+      const state = { research: [] };
+      const result = executeCommand(state, 'research derp');
+      assert.equal(typeof result, 'string');
+      assert(result.includes('unknown'));
+    });
+
+    it('should reject unavailable research', () => {
+      const state = { research: [] };
+      const result = executeCommand(state, 'research logging');
+      assert.equal(typeof result, 'string');
+      assert.equal(result, 'cannot research logging yet');
+    });
+
+    it('should reject if resources insufficient', () => {
+      const state = { research: [], resources: {} };
+      const result = executeCommand(state, 'research cooking');
+      assert.equal(typeof result, 'string');
+      assert(result.includes('lacking'));
+    });
+
+    it('should research', () => {
+      const state = { research: ['cooking'], resources: { coins: 200, food: 200 }};
+      const result = executeCommand(state, 'research logging');
+      assert.deepEqual(result, { command: 'research logging' });
+      assert.deepEqual(state, { research: ['cooking', 'logging'], resources: { coins: 100, food: 100 } });
     });
   });
 });
