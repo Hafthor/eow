@@ -29,11 +29,18 @@ function initialState() {
   };
 }
 
+const ensureState = {
+  resources: {},
+  research: [],
+  objects: [],
+  messages: [],
+};
+
 const file = require('./file');
 
 function readOrInit(player) {
   return file.load(player).then((state) => {
-    if (state) return state;
+    if (state) return { ...ensureState, ...state };
     const newState = initialState();
     return file.save(player, newState).then(() => newState);
   });
